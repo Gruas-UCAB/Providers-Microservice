@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "2EQbcnuZR04229PWfm6JrvpEpLQErj9vdfQ4q8/gozw=",
+  "Source": "ProvidersMicroservice",
+  "BasePath": "_content/ProvidersMicroservice",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

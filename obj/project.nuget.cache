@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "j0ay3qpVGCE=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Admin\\Documents\\Universidad\\9no Semestre\\Desarrollo de Software\\Proyecto\\gruas-ucab-backend\\MicroServices\\ProvidersMicroservice\\ProvidersMicroservice.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.21.0\\microsoft.visualstudio.azure.containers.tools.targets.1.21.0.nupkg.sha512"
+  ],
+  "logs": []
+}
