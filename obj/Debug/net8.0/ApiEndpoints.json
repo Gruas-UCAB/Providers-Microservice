@@ -1,20 +1,76 @@
 [
   {
-    "ContainingType": "Program\u002B\u003C\u003Ec",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__0_0",
-    "RelativePath": "",
-    "HttpMethod": "GET",
-    "IsController": false,
+    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
+    "Method": "CreateCrane",
+    "RelativePath": "crane",
+    "HttpMethod": "POST",
+    "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
+    "Parameters": [
       {
-        "Type": "System.String",
-        "MediaTypes": [
-          "text/plain"
-        ],
-        "StatusCode": 200
+        "Name": "command",
+        "Type": "ProvidersMicroservice.src.crane.application.commands.create_crane.types.CreateCraneCommand",
+        "IsRequired": true
       }
-    ]
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
+    "Method": "GetAllCranes",
+    "RelativePath": "crane",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "offset",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "active",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
+    "Method": "GetCraneById",
+    "RelativePath": "crane/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
+    "Method": "ToggleActivityCraneById",
+    "RelativePath": "crane/{id}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]
