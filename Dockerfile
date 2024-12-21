@@ -4,18 +4,18 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
-
+EXPOSE 5200
+EXPOSE 5250
+ENV ASPNETCORE_URLS=http://+:5200;https://+:5250
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["MicroServices/ProvidersMicroservice/ProvidersMicroservice.csproj", "MicroServices/ProvidersMicroservice/"]
-RUN dotnet restore "./MicroServices/ProvidersMicroservice/ProvidersMicroservice.csproj"
+COPY ["ProvidersMicroservice.csproj", "."]
+RUN dotnet restore "./ProvidersMicroservice.csproj"
 COPY . .
-WORKDIR "/src/MicroServices/ProvidersMicroservice"
+WORKDIR "/src/."
 RUN dotnet build "./ProvidersMicroservice.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
