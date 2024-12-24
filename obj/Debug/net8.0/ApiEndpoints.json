@@ -1,24 +1,24 @@
 [
   {
-    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
-    "Method": "CreateCrane",
-    "RelativePath": "crane",
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "CreateProvider",
+    "RelativePath": "provider",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "command",
-        "Type": "ProvidersMicroservice.src.crane.application.commands.create_crane.types.CreateCraneCommand",
+        "Type": "ProvidersMicroservice.src.providers.application.commands.create_provider.types.CreateProviderCommand",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
-    "Method": "GetAllCranes",
-    "RelativePath": "crane",
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetAllProviders",
+    "RelativePath": "provider",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -42,9 +42,9 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
-    "Method": "GetCraneById",
-    "RelativePath": "crane/{id}",
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetProviderById",
+    "RelativePath": "provider/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -58,15 +58,172 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ProvidersMicroservice.src.crane.infrastructure.CraneController",
-    "Method": "ToggleActivityCraneById",
-    "RelativePath": "crane/{id}",
-    "HttpMethod": "PATCH",
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "CreateConductor",
+    "RelativePath": "provider/conductors",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
+        "Name": "command",
+        "Type": "ProvidersMicroservice.src.provider.application.commands.create_conductor.types.CreateConductorCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetAllConductors",
+    "RelativePath": "provider/conductors/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "offset",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "active",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
         "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "AssignCraneToConductor",
+    "RelativePath": "provider/conductors/assign",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ProvidersMicroservice.src.provider.application.commands.assign_crane_to_conductor.types.AssignCraneToConductorCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetConductorById",
+    "RelativePath": "provider/conductors/conductor/{conductorId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "providerId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "conductorId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "UnassignCraneToConductor",
+    "RelativePath": "provider/conductors/unassign/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ProvidersMicroservice.src.provider.application.commands.unassign_crane_to_conductor.types.UnassignCraneToConductorCommand",
+        "IsRequired": true
+      },
+      {
+        "Name": "id",
+        "Type": "",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "CreateCrane",
+    "RelativePath": "provider/cranes",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "ProvidersMicroservice.src.crane.application.commands.create_crane.types.CreateCraneCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetAllCranes",
+    "RelativePath": "provider/cranes/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "offset",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "active",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetCraneById",
+    "RelativePath": "provider/cranes/crane",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "providerId",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "craneId",
         "Type": "System.String",
         "IsRequired": true
       }

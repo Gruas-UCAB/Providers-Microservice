@@ -1,9 +1,10 @@
 using DotNetEnv;
 using FluentValidation;
 using ProvidersMicroservice.src.crane.application.commands.create_crane.types;
-using ProvidersMicroservice.src.crane.application.repositories;
-using ProvidersMicroservice.src.crane.infrastructure.repositories;
-using ProvidersMicroservice.src.crane.infrastructure.validators;
+using ProvidersMicroservice.src.provider.application.repositories;
+using ProvidersMicroservice.src.provider.infrastructure.repositories;
+using ProvidersMicroservice.src.provider.infrastructure.validators;
+using ProvidersMicroservice.src.providers.application.commands.create_provider.types;
 using UsersMicroservice.core.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<MongoDBConfig>();
 builder.Services.AddTransient<IValidator<CreateCraneCommand>, CreateCraneCommandValidator>();
 builder.Services.AddScoped<ICraneRepository, MongoCraneRepository>();
+builder.Services.AddTransient<IValidator<CreateProviderCommand>, CreateProviderCommandValidator>();
+builder.Services.AddScoped<IProviderRepository, MongoProviderRepository>();
 
 var app = builder.Build();
 
