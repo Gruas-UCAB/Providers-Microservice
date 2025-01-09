@@ -11,6 +11,11 @@
         "Name": "command",
         "Type": "ProvidersMicroservice.src.providers.application.commands.create_provider.types.CreateProviderCommand",
         "IsRequired": true
+      },
+      {
+        "Name": "Authorization",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -69,6 +74,11 @@
         "Name": "command",
         "Type": "ProvidersMicroservice.src.provider.application.commands.create_conductor.types.CreateConductorCommand",
         "IsRequired": true
+      },
+      {
+        "Name": "Authorization",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -106,35 +116,19 @@
   },
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
-    "Method": "AssignCraneToConductor",
-    "RelativePath": "provider/conductors/assign",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "command",
-        "Type": "ProvidersMicroservice.src.provider.application.commands.assign_crane_to_conductor.types.AssignCraneToConductorCommand",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "GetConductorById",
-    "RelativePath": "provider/conductors/conductor/{conductorId}",
+    "RelativePath": "provider/conductors/conductor/{providerId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "providerId",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "query",
+        "Type": "ProvidersMicroservice.src.provider.infrastructure.dto.GetConductorByIdDto",
+        "IsRequired": true
       },
       {
-        "Name": "conductorId",
+        "Name": "providerId",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -143,20 +137,41 @@
   },
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
-    "Method": "UnassignCraneToConductor",
-    "RelativePath": "provider/conductors/unassign/{id}",
-    "HttpMethod": "PUT",
+    "Method": "UpdateConductorLocation",
+    "RelativePath": "provider/conductors/conductor/location/{providerId}",
+    "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "command",
-        "Type": "ProvidersMicroservice.src.provider.application.commands.unassign_crane_to_conductor.types.UnassignCraneToConductorCommand",
+        "Name": "data",
+        "Type": "ProvidersMicroservice.src.provider.application.repositories.dto.UpdateConductorDto",
         "IsRequired": true
       },
       {
-        "Name": "id",
-        "Type": "",
+        "Name": "providerId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "ToggleConductorActivity",
+    "RelativePath": "provider/conductors/conductor/toggle-activity/{providerId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "data",
+        "Type": "ProvidersMicroservice.src.provider.application.repositories.dto.UpdateConductorDto",
+        "IsRequired": true
+      },
+      {
+        "Name": "providerId",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
@@ -212,18 +227,39 @@
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "GetCraneById",
-    "RelativePath": "provider/cranes/crane",
+    "RelativePath": "provider/cranes/crane/{providerId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "providerId",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "query",
+        "Type": "ProvidersMicroservice.src.provider.infrastructure.dto.GetCraneByIdDto",
+        "IsRequired": true
       },
       {
-        "Name": "craneId",
+        "Name": "providerId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "ToggleCraneActivity",
+    "RelativePath": "provider/cranes/crane/toggle-activity/{providerId}",
+    "HttpMethod": "PATCH",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "data",
+        "Type": "ProvidersMicroservice.src.provider.application.repositories.dto.UpdateCraneDto",
+        "IsRequired": true
+      },
+      {
+        "Name": "providerId",
         "Type": "System.String",
         "IsRequired": true
       }

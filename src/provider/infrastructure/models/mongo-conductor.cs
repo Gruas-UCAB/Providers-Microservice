@@ -15,6 +15,9 @@ namespace ProvidersMicroservice.src.provider.infrastructure.models
         [BsonElement("name"), BsonRepresentation(BsonType.String)]
         public required string Name { get; set; }
 
+        [BsonElement("location"), BsonRepresentation(BsonType.String)]
+        public required string Location { get; set; }
+
         [BsonElement("image"), BsonRepresentation(BsonType.String)]
         public required string Image { get; set; }
 

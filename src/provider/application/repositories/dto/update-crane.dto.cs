@@ -1,8 +1,7 @@
 ﻿namespace ProvidersMicroservice.src.provider.application.repositories.dto
 {
-    public record GetCraneByIdDto
+    public record UpdateCraneDto
     (
-        string providerId,
-        string craneId
+        string CraneId
     );
 }

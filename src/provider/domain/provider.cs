@@ -66,16 +66,6 @@ namespace ProvidersMicroservice.src.provider.domain
             return _conductors;
         }
 
-        public void AssignCraneToConductor(CraneId craneId, Conductor conductor)
-        {
-            Apply(CraneAssignedToConductor.CreateEvent(_id, craneId, new ConductorId(conductor.GetId())));
-        }
-
-        public void RemoveCraneFromConductor(Conductor conductor, CraneId craneId)
-        {
-            Apply(CraneUnassignedToConductor.CreateEvent(_id, craneId, new ConductorId(conductor.GetId())));
-        }
-
         public static Provider Create(ProviderId id, ProviderName name, ProviderRif rif, ProviderImage image, List<Conductor> conductors, List<Crane> cranes)
         {
             Provider provider = new(id);
@@ -88,9 +78,9 @@ namespace ProvidersMicroservice.src.provider.domain
             Apply(CraneCreated.CreateEvent(_id, id, brand, model, plate, type, year));
             return _cranes.Last();
         }
-        public Conductor AddConductor(ConductorId id, ConductorDni dni, ConductorName name, ConductorImage image, CraneId? crane)
+        public Conductor AddConductor(ConductorId id, ConductorDni dni, ConductorName name, ConductorLocation location, ConductorImage image, CraneId crane)
         {
-            Apply(ConductorCreated.CreateEvent(_id, id, dni, name, image, crane ?? null));
+            Apply(ConductorCreated.CreateEvent(_id, id, dni, name, location, image, crane));
             return _conductors.Last();
         }
         private void OnProviderCreatedEvent(ProviderCreated Event)
@@ -107,8 +97,10 @@ namespace ProvidersMicroservice.src.provider.domain
                     new ConductorId(Event.Id),
                     new ConductorDni(Event.Dni),
                     new ConductorName(Event.Name),
+                    new ConductorLocation(Event.Location),
                     new ConductorImage(Event.Image),
-                    Event.CraneId != null ? new CraneId(Event.CraneId) : null);
+                    new CraneId(Event.CraneId)
+                    );
             _conductors.Add(conductor);
             return conductor;
         }
@@ -124,16 +116,6 @@ namespace ProvidersMicroservice.src.provider.domain
                 );
             _cranes.Add(crane);
             return crane;
-        }
-        private void OnCraneAssignedToConductorEvent(CraneAssignedToConductor Event)
-        {
-            var conductor = _conductors.Find(conductor => conductor.GetId() == Event.ConductorId);
-            conductor.AssignCrane(new CraneId(Event.CraneId));
-        }
-        private void OnCraneUnassignedToConductorEvent(CraneUnassignedToConductor Event)
-        {
-            var conductor = _conductors.Find(conductor => conductor.GetId() == Event.ConductorId);
-            conductor.UnassignCrane(new CraneId(Event.CraneId));
         }
     }
 }

@@ -12,31 +12,25 @@ using ProvidersMicroservice.src.provider.domain.entities.crane;
 
 namespace ProvidersMicroservice.src.crane.application.commands.create_provider
 {
-    public class CreateProviderCommandHandler(IIdGenerator<string> idGenerator, IProviderRepository providerRepository) : IApplicationService<CreateProviderCommand, CreateProviderResponse>
+    public class CreateProviderCommandHandler(IProviderRepository providerRepository) : IApplicationService<CreateProviderCommand, CreateProviderResponse>
     {
-        private readonly IIdGenerator<string> _idGenerator = idGenerator;
         private readonly IProviderRepository _providerRepository = providerRepository;
 
         public async Task<Result<CreateProviderResponse>> Execute(CreateProviderCommand data)
         {
             try
             {
-                var id = _idGenerator.GenerateId();
-                var rif = data.Rif;
-                var name = data.Name;
-                var image = data.Image;
-
                 var provider = Provider.Create(
-                    new ProviderId(id),
-                    new ProviderName(name),
-                    new ProviderRif(rif),
-                    new ProviderImage(image),
+                    new ProviderId(data.Id),
+                    new ProviderName(data.Name),
+                    new ProviderRif(data.Rif),
+                    new ProviderImage(data.Image),
                     new List<Conductor>(),
                     new List<Crane>()
                     );
 
                 await _providerRepository.SaveProvider(provider);
-                return Result<CreateProviderResponse>.Success(new CreateProviderResponse(id));
+                return Result<CreateProviderResponse>.Success(new CreateProviderResponse(provider.GetId()));
             }
             catch (Exception e)
             {

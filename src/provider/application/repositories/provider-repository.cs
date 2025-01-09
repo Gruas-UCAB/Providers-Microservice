@@ -4,8 +4,8 @@ using ProvidersMicroservice.src.provider.domain;
 using ProvidersMicroservice.src.provider.domain.value_objects;
 using ProvidersMicroservice.src.provider.domain.entities.conductor.value_objects;
 using ProvidersMicroservice.src.provider.domain.entities.conductor;
-using ProvidersMicroservice.src.provider.domain.entities.crane.value_objects;
 using ProvidersMicroservice.src.provider.domain.entities.crane;
+using ProvidersMicroservice.src.provider.domain.entities.crane.value_objects;
 
 namespace ProvidersMicroservice.src.provider.application.repositories
 {
@@ -16,14 +16,13 @@ namespace ProvidersMicroservice.src.provider.application.repositories
         Task<Conductor> SaveConductor(SaveConductorDto data);
         Task<_Optional<List<Provider>>> GetAllProviders(GetAllProvidersDto data);
         Task<_Optional<List<Crane>>> GetAllCranes(GetAllCranesDto data, ProviderId providerId);
-        Task<_Optional<Crane>> GetCraneById(GetCraneByIdDto data);
+        Task<_Optional<Crane>> GetCraneById(ProviderId providerId, CraneId craneId);
         Task<_Optional<Provider>> GetProviderById(ProviderId id);
         Task<_Optional<List<Conductor>>> GetAllConductors(GetAllConductorsDto data, ProviderId providerId);
-        Task<_Optional<Conductor>> GetConductorById(GetConductorByIdDto data);
-        Task<ConductorId> ToggleActivityConductorById(ToggleActivityConductorByIdDto data);
-        Task<CraneId> ToggleActivityCraneById(ToggleActivityCraneByIdDto data);
+        Task<_Optional<Conductor>> GetConductorById(ProviderId providerId, ConductorId conductorId);
+        Task<ConductorId> UpdateConductorLocationById(ProviderId providerId, Conductor conductor);
+        Task<ConductorId> ToggleActivityConductorById(ProviderId providerId, ConductorId craneId);
+        Task<CraneId> ToggleActivityCraneById(ProviderId providerId, CraneId craneId);
         Task<ProviderId> ToggleActivityProviderById(ProviderId id);
-        Task<ConductorId> AssignCraneToConductorById(AssignCraneToConductorDto data);
-        Task<ConductorId> UnassignCraneFromConductorById(UnassignCraneToConductorDto data);
     }
 }

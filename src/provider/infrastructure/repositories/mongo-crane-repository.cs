@@ -92,7 +92,6 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             }
             return _Optional<List<Crane>>.Of(craneList);
         }
-
         public async Task<_Optional<Crane>> GetCraneById(CraneId id)
         {
             try
@@ -125,7 +124,6 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
                 return _Optional<Crane>.Empty();
             }
         }
-
         public async Task<CraneId> ToggleActivityCraneById(CraneId id)
         {
             var crane = await GetCraneById(id);

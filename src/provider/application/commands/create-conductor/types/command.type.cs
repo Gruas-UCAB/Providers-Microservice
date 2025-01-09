@@ -2,9 +2,11 @@
 {
     public record CreateConductorCommand(
         string ProviderId,
+        string ConductorId,
         int Dni,
         string Name,
+        string Location,
         string Image,
-        string? CraneId
+        string CraneId
      );
 }
