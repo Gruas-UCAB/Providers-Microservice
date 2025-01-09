@@ -25,6 +25,10 @@ namespace ProvidersMicroservice.src.provider.infrastructure.validators
                 .MaximumLength(25)
                 .WithMessage("Name must not exceed 15 characters");
 
+            RuleFor(x => x.Location)
+                .NotEmpty()
+                .WithMessage("Location is required");
+
             RuleFor(x => x.Image)
                 .NotEmpty()
                 .WithMessage("Image is required");

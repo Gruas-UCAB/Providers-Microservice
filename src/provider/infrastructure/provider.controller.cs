@@ -1,44 +1,60 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProvidersMicroservice.src.crane.application.commands.create_crane;
 using ProvidersMicroservice.src.crane.application.commands.create_crane.types;
 using ProvidersMicroservice.src.crane.application.commands.create_provider;
-using ProvidersMicroservice.src.provider.application.commands.assign_crane_to_conductor;
-using ProvidersMicroservice.src.provider.application.commands.assign_crane_to_conductor.types;
 using ProvidersMicroservice.src.provider.application.commands.create_conductor;
 using ProvidersMicroservice.src.provider.application.commands.create_conductor.types;
-using ProvidersMicroservice.src.provider.application.commands.unassign_crane_to_conductor.types;
+using ProvidersMicroservice.src.provider.application.commands.update_conductor;
+using ProvidersMicroservice.src.provider.application.commands.update_conductor.types;
+using ProvidersMicroservice.src.provider.application.commands.update_crane;
+using ProvidersMicroservice.src.provider.application.commands.update_crane.types;
 using ProvidersMicroservice.src.provider.application.repositories;
 using ProvidersMicroservice.src.provider.application.repositories.dto;
 using ProvidersMicroservice.src.provider.application.repositories.exceptions;
 using ProvidersMicroservice.src.provider.domain.entities.conductor.value_objects;
 using ProvidersMicroservice.src.provider.domain.entities.crane.value_objects;
 using ProvidersMicroservice.src.provider.domain.value_objects;
+using ProvidersMicroservice.src.provider.infrastructure.dto;
 using ProvidersMicroservice.src.provider.infrastructure.repositories;
 using ProvidersMicroservice.src.provider.infrastructure.validators;
 using ProvidersMicroservice.src.providers.application.commands.create_provider.types;
+using RestSharp;
 using UsersMicroservice.core.Application;
-using UsersMicroservice.core.Infrastructure;
 
 namespace ProvidersMicroservice.src.provider.infrastructure
 {
+    [Authorize]
     [Route("provider")]
     [ApiController]
-    public class ProviderController : Controller
+    public class ProviderController(IProviderRepository providerRepository, IIdGenerator<string> idGenerator, IRestClient restClient) : Controller
     {
-        private readonly IProviderRepository _providerRepository = new MongoProviderRepository();
-        private readonly IIdGenerator<string> _idGenerator = new UUIDGenerator();
+        private readonly IProviderRepository _providerRepository = providerRepository;
+        private readonly IIdGenerator<string> _idGenerator = idGenerator;
+        private readonly IRestClient _restClient = restClient;
 
+        [Authorize(Policy = "AdminUser")]
         [HttpPost]
-        public async Task<IActionResult> CreateProvider(CreateProviderCommand command)
+        public async Task<IActionResult> CreateProvider([FromBody]CreateProviderCommand command, [FromHeader(Name = "Authorization")] string token)
         {
+            var userExistsRequest = new RestRequest($"https://localhost:5350/user/{command.Id}", Method.Get);
+            userExistsRequest.AddHeader("Authorization", token);
+            var userFind = await _restClient.ExecuteAsync(userExistsRequest);
+            if (!userFind.IsSuccessful)
+            {
+                return NotFound(new { errorMessage = userFind.Content });
+            }
+            if (!userFind.Content.Contains("provider"))
+            {
+                return Unauthorized(new { errorMessage = "Provider Id not correspond to a provider user" });
+            }
             var validator = new CreateProviderCommandValidator();
             if (!validator.Validate(command).IsValid)
             {
                 var errorMessages = validator.Validate(command).Errors.Select(e => e.ErrorMessage).ToList();
                 return BadRequest(new { errors = errorMessages });
             }
-            var service = new CreateProviderCommandHandler(_idGenerator, _providerRepository);
+            var service = new CreateProviderCommandHandler(_providerRepository);
             var response = await service.Execute(command);
             if (response.IsFailure)
             {
@@ -48,16 +64,28 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             return Created("Created", new { id = data });
         }
 
+        [Authorize(Policy = "CreationalUser")]
         [HttpPost("conductors")]
-        public async Task<IActionResult> CreateConductor(CreateConductorCommand command)
+        public async Task<IActionResult> CreateConductor(CreateConductorCommand command, [FromHeader(Name = "Authorization")] string token)
         {
+            var userExistsRequest = new RestRequest($"https://localhost:5350/user/{command.ConductorId}", Method.Get);
+            userExistsRequest.AddHeader("Authorization", token);
+            var userFind = await _restClient.ExecuteAsync(userExistsRequest);
+            if (!userFind.IsSuccessful)
+            {
+                return NotFound(new { errorMessage = userFind.Content });
+            }
+            if (!userFind.Content.Contains("conductor"))
+            {
+                return Unauthorized(new { errorMessage = "The conductor id not correspond to a conductor user" });
+            }
             var validator = new CreateConductorCommandValidator();
             if (!validator.Validate(command).IsValid)
             {
                 var errorMessages = validator.Validate(command).Errors.Select(e => e.ErrorMessage).ToList();
                 return BadRequest(new { errors = errorMessages });
             }
-            var service = new CreateConductorCommandHandler(_idGenerator, _providerRepository);
+            var service = new CreateConductorCommandHandler(_providerRepository);
             var response = await service.Execute(command);
             if (response.IsFailure)
             {
@@ -67,6 +95,7 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             return Created("Created", new { id = data });
         }
 
+        [Authorize(Policy = "CreationalUser")]
         [HttpPost("cranes")]
         public async Task<IActionResult> CreateCrane(CreateCraneCommand command)
         {
@@ -106,6 +135,7 @@ namespace ProvidersMicroservice.src.provider.infrastructure
                         Id = conductor.GetId(),
                         Dni = conductor.GetDni(),
                         Name = conductor.GetName(),
+                        Location = conductor.GetLocation(),
                         Image = conductor.GetImage(),
                         AssignedCrane = conductor.GetAssignedCrane(),
                         IsActive = conductor.IsActive()
@@ -138,6 +168,7 @@ namespace ProvidersMicroservice.src.provider.infrastructure
                     Id = c.GetId(),
                     Dni = c.GetDni(),
                     Name = c.GetName(),
+                    Location = c.GetLocation(),
                     Image = c.GetImage(),
                     AssignedCrane = c.GetAssignedCrane(),
                     IsActive = c.IsActive()
@@ -188,6 +219,7 @@ namespace ProvidersMicroservice.src.provider.infrastructure
                     Id = conductor.GetId(),
                     Dni = conductor.GetDni(),
                     Name = conductor.GetName(),
+                    Location = conductor.GetLocation(),
                     Image = conductor.GetImage(),
                     AssignedCrane = conductor.GetAssignedCrane(),
                     IsActive = conductor.IsActive()
@@ -205,12 +237,12 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             });
         }
 
-        [HttpGet("conductors/conductor/{conductorId}")]
-        public async Task<IActionResult> GetConductorById([FromQuery]string providerId, string conductorId)
+        [HttpGet("conductors/conductor/{providerId}")]
+        public async Task<IActionResult> GetConductorById([FromBody] GetConductorByIdDto query, string providerId)
         {
             try
             {
-                var conductor = await _providerRepository.GetConductorById(new GetConductorByIdDto(new ProviderId(providerId), new ConductorId(conductorId)));
+                var conductor = await _providerRepository.GetConductorById(new ProviderId(providerId), new ConductorId(query.ConductorId));
                 if (!conductor.HasValue())
                 {
                     return NotFound(new { errorMessage = new ConductorNotFoundException().Message });
@@ -221,22 +253,23 @@ namespace ProvidersMicroservice.src.provider.infrastructure
                     Id = data.GetId(),
                     Dni = data.GetDni(),
                     Name = data.GetName(),
+                    Location = data.GetLocation(),
                     Image = data.GetImage(),
                     Crane = data.GetAssignedCrane()
                 });
             }
             catch (Exception e)
             {
-                return BadRequest(new { errorMessage = e.Message});
+                return BadRequest(new { errorMessage = e.Message });
             }
         }
 
-        [HttpGet("cranes/crane")]
-        public async Task<IActionResult> GetCraneById([FromQuery] string providerId, [FromBody]string craneId)
+        [HttpGet("cranes/crane/{providerId}")]
+        public async Task<IActionResult> GetCraneById([FromBody] GetCraneByIdDto query, string providerId)
         {
             try
             {
-                var crane = await _providerRepository.GetCraneById(new GetCraneByIdDto(providerId, craneId));
+                var crane = await _providerRepository.GetCraneById(new ProviderId(providerId), new CraneId(query.CraneId));
                 if (!crane.HasValue())
                 {
                     return NotFound(new { errorMessage = new CraneNotFoundException().Message });
@@ -258,30 +291,90 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             }
         }
 
-        [HttpPut("conductors/assign")]
-        public async Task<IActionResult> AssignCraneToConductor(AssignCraneToConductorCommand command)
+        [HttpPatch("conductors/conductor/location/{providerId}")]
+        public async Task<IActionResult> UpdateConductorLocation([FromBody] UpdateConductorDto data, string providerId)
         {
-            var service = new AssignCraneToConductorCommandHandler(_providerRepository);
-            var response = await service.Execute(command);
-            if (response.IsFailure)
+            try
             {
-                return BadRequest(new { errors = response.ErrorMessage() });
+                var command = new UpdateConductorCommand(providerId, data.ConductorId, data.Location);
+                if (string.IsNullOrEmpty(command.Location))
+                {
+                    return BadRequest(new { errorMessage = "Location is required" });
+                }
+                var validator = new UpdateConductorCommandValidator();
+                if (!validator.Validate(command).IsValid)
+                {
+                    var errorMessages = validator.Validate(command).Errors.Select(e => e.ErrorMessage).ToList();
+                    return BadRequest(new { errors = errorMessages });
+                }
+                var service = new UpdateConductorCommandHandler(_providerRepository);
+                var response = await service.Execute(command);
+                if (response.IsFailure)
+                {
+                    return BadRequest(new { errors = response.ErrorMessage() });
+                }
+                return Ok(new { message = "Conductor location updated successfully" });
             }
-            var data = response.Unwrap().Id;
-            return Ok(new { id = data });
+            catch (Exception e)
+            {
+                return BadRequest(new { errors = e.Message });
+            }
         }
 
-        [HttpPut("conductors/unassign/{id}")]
-        public async Task<IActionResult> UnassignCraneToConductor(UnassignCraneToConductorCommand command)
+        [HttpPatch("conductors/conductor/toggle-activity/{providerId}")]
+        public async Task<IActionResult> ToggleConductorActivity([FromBody] UpdateConductorDto data, string providerId)
         {
-            var service = new UnassignCraneToConductorCommandHandler(_providerRepository);
-            var response = await service.Execute(command);
-            if (response.IsFailure)
+            try
             {
-                return BadRequest(new { errors = response.ErrorMessage() });
+                var command = new UpdateConductorCommand(providerId, data.ConductorId, data.Location);
+                if (!string.IsNullOrEmpty(command.Location))
+                {
+                    return BadRequest(new { errorMessage = "Location is not required" });
+                }
+                var validator = new UpdateConductorCommandValidator();
+                if (!validator.Validate(command).IsValid)
+                {
+                    var errorMessages = validator.Validate(command).Errors.Select(e => e.ErrorMessage).ToList();
+                    return BadRequest(new { errors = errorMessages });
+                }
+                var service = new UpdateConductorCommandHandler(_providerRepository);
+                var response = await service.Execute(command);
+                if (response.IsFailure)
+                {
+                    return BadRequest(new { errors = response.ErrorMessage() });
+                }
+                return Ok(new { message = "Conductor activity toggled successfully" });
             }
-            var data = response.Unwrap().Id;
-            return Ok(new { id = data });
+            catch (Exception e)
+            {
+                return BadRequest(new { errors = e.Message });
+            }
+        }
+
+        [HttpPatch("cranes/crane/toggle-activity/{providerId}")]
+        public async Task<IActionResult> ToggleCraneActivity([FromBody] UpdateCraneDto data, string providerId)
+        {
+            try
+            {
+                var command = new UpdateCraneCommand(providerId, data.CraneId);
+                var validator = new UpdateCraneCommandValidator();
+                if (!validator.Validate(command).IsValid)
+                {
+                    var errorMessages = validator.Validate(command).Errors.Select(e => e.ErrorMessage).ToList();
+                    return BadRequest(new { errors = errorMessages });
+                }
+                var service = new UpdateCraneCommandHandler(_providerRepository);
+                var response = await service.Execute(command);
+                if (response.IsFailure)
+                {
+                    return BadRequest(new { errors = response.ErrorMessage() });
+                }
+                return Ok(new { message = "Crane activity toggled successfully" });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(new { errors = e.Message });
+            }
         }
     }
 }

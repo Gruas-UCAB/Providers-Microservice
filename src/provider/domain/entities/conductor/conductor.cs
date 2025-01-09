@@ -6,12 +6,13 @@ using UsersMicroservice.Core.Domain;
 
 namespace ProvidersMicroservice.src.provider.domain.entities.conductor
 {
-    public class Conductor(ConductorId id, ConductorDni dni, ConductorName name, ConductorImage image, CraneId? craneId) : Entity<ConductorId>(id)    
+    public class Conductor(ConductorId id, ConductorDni dni, ConductorName name, ConductorLocation location, ConductorImage image, CraneId craneId) : Entity<ConductorId>(id)    
     {
         private ConductorDni _dni = dni;
         private ConductorName _name = name;
+        private ConductorLocation _location = location;
         private ConductorImage _image = image;
-        private CraneId? _assignedCrane = craneId;
+        private CraneId _assignedCrane = craneId;
         private bool _isActive = true;
 
         public string GetId()
@@ -29,6 +30,11 @@ namespace ProvidersMicroservice.src.provider.domain.entities.conductor
             return _name.GetName();
         }
 
+        public string GetLocation()
+        {
+            return _location.GetLocation();
+        }
+
         public string GetImage()
         {
             return _image.GetImage();
@@ -36,37 +42,15 @@ namespace ProvidersMicroservice.src.provider.domain.entities.conductor
 
         public string GetAssignedCrane()
         {
-            if (_assignedCrane == null)
-            {
-                return null;
-            }
             return _assignedCrane.GetId();
         }
 
-        public void AssignCrane(CraneId crane)
-        {   
-            if (_assignedCrane != null)
-            {
-                UnassignCrane(_assignedCrane);
-                //throw new ConductorAlreadyHasCraneAssignedException();
-            }
-            _assignedCrane = crane;
-        }
-
-        public void UnassignCrane(CraneId craneId)
+        public void ChangeLocation(ConductorLocation location)
         {
-            if (_assignedCrane == null)
-            {
-                throw new ConductorNotHaveCraneAssignedException();
-            }
-            if (_assignedCrane.GetId() != craneId.GetId())
-            {
-                throw new CraneIsNotFromConductorException();
-            }
-            _assignedCrane = null;
+            _location = location;
         }
 
-        public void ChangeImage(ConductorImage image)
+            public void ChangeImage(ConductorImage image)
         {
             _image = image;
         }

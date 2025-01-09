@@ -12,39 +12,34 @@ using ProvidersMicroservice.src.provider.application.repositories.dto;
 
 namespace ProvidersMicroservice.src.provider.application.commands.create_conductor
 {
-    public class CreateConductorCommandHandler(IIdGenerator<string> idGenerator, IProviderRepository providerRepository ) : IApplicationService<CreateConductorCommand, CreateConductorResponse>
+    public class CreateConductorCommandHandler(IProviderRepository providerRepository ) : IApplicationService<CreateConductorCommand, CreateConductorResponse>
     {
-        private readonly IIdGenerator<string> _idGenerator = idGenerator;
         private readonly IProviderRepository _providerRepository = providerRepository;
         public async Task<Result<CreateConductorResponse>> Execute(CreateConductorCommand data)
         {
             try
             {
-                var providerId = new ProviderId(data.ProviderId);
-                var provider = await _providerRepository.GetProviderById(providerId);
-
+                var provider = await _providerRepository.GetProviderById(new ProviderId(data.ProviderId));
                 if (!provider.HasValue())
                 {
                     return Result<CreateConductorResponse>.Failure(new ProviderNotFoundException());
                 }
-
-                var id = _idGenerator.GenerateId();
-                var dni = data.Dni;
-                var name = data.Name;
-                var image = data.Image;
-                var crane = data.CraneId;
-
                 var providerWithConductor = provider.Unwrap();
+                var crane = providerWithConductor.GetCranes().Find(c => c.GetId() == data.CraneId);
+                if (crane == null)
+                {
+                    return Result<CreateConductorResponse>.Failure(new CraneNotFoundException());
+                }
                 var conductor = providerWithConductor.AddConductor(
-                        new ConductorId(id), 
-                        new ConductorDni(dni), 
-                        new ConductorName(name), 
-                        new ConductorImage(image), 
-                        crane != null ? new CraneId(crane) : null
+                        new ConductorId(data.ConductorId), 
+                        new ConductorDni(data.Dni), 
+                        new ConductorName(data.Name), 
+                        new ConductorLocation(data.Location),
+                        new ConductorImage(data.Image), 
+                        new CraneId(data.CraneId)
                     );
-
-                await _providerRepository.SaveConductor(new SaveConductorDto(providerId, conductor));
-                return Result<CreateConductorResponse>.Success(new CreateConductorResponse(id));
+                await _providerRepository.SaveConductor(new SaveConductorDto(new ProviderId(data.ProviderId), conductor));
+                return Result<CreateConductorResponse>.Success(new CreateConductorResponse(conductor.GetId()));
             }
             catch (Exception e)
             {
