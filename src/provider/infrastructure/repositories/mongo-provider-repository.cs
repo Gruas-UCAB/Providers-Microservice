@@ -26,6 +26,16 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             _providerCollection = _config.db.GetCollection<BsonDocument>("providers");
         }
 
+        public async Task<_Optional<List<Conductor>>> GetAllActiveConductors(GetAllConductorsDto data)
+        {
+            var providers = await GetAllProviders(new GetAllProvidersDto());
+            if (!providers.HasValue())
+            {
+                return _Optional<List<Conductor>>.Empty();
+            }
+            var conductors = providers.Unwrap().SelectMany(p => p.GetConductors()).Where(c => c.IsActive()).ToList();
+            return (conductors.Count == 0) ? _Optional<List<Conductor>>.Empty() : _Optional<List<Conductor>>.Of(conductors);
+        }
         public async Task<_Optional<List<Conductor>>> GetAllConductors(GetAllConductorsDto data, ProviderId providerId)
         {
             var filter = Builders<BsonDocument>.Filter.Eq("_id", providerId.GetId());
@@ -133,15 +143,14 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             return _Optional<List<Provider>>.Of(providerList);
         }
 
-        public async Task<_Optional<Conductor>> GetConductorById(ProviderId providerId, ConductorId conductorId)
+        public async Task<_Optional<Conductor>> GetConductorById(ConductorId conductorId)
         {  
-            var providerFind = await GetProviderById(providerId);
-            if (!providerFind.HasValue())
+            var providers = await GetAllProviders(new GetAllProvidersDto());
+            if (!providers.HasValue())
             {
-                throw new ProviderNotFoundException();
+                return _Optional<Conductor>.Empty();
             }
-            var provider = providerFind.Unwrap();
-            var conductor = provider.GetConductors().Find(c => c.GetId() == conductorId.GetId());
+            var conductor = providers.Unwrap().SelectMany(p => p.GetConductors()).FirstOrDefault(c => c.GetId() == conductorId.GetId());
             if (conductor == null)
             {
                 return _Optional<Conductor>.Empty();
@@ -394,14 +403,15 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             return _Optional<Crane>.Of(crane);
         }
 
-        public async Task<ConductorId> UpdateConductorLocationById(ProviderId providerId, Conductor conductor)
+        public async Task<ConductorId> UpdateConductorLocationById(Conductor conductor)
         {
-            var provider = await GetProviderById(providerId);
-            if (!provider.HasValue())
+            var providersFind = await GetAllProviders(new GetAllProvidersDto());
+            if (!providersFind.HasValue())
             {
-                throw new ProviderNotFoundException();
+                throw new NoProvidersFoundException();
             }
-            var providerToUpdate = provider.Unwrap();
+            var providers = providersFind.Unwrap();
+            var providerToUpdate = providers.Find(p => p.GetConductors().Exists(c => c.GetId() == conductor.GetId())) ?? throw new ProviderNotFoundException();
             var conductors = providerToUpdate.GetConductors();
             var conductorToUpdate = conductors.Find(c => c.GetId() == conductor.GetId()) ?? throw new ConductorNotFoundException();
             conductorToUpdate.ChangeLocation(new ConductorLocation(conductor.GetLocation()));
@@ -420,7 +430,7 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
                 };
                 conductorsBsonArray.Add(conductorBson);
             }
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", providerId.GetId());
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", providerToUpdate.GetId());
             var update = Builders<BsonDocument>.Update
                 .Set("conductors", conductorsBsonArray)
                 .Set("updatedAt", DateTime.Now);
@@ -428,14 +438,15 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             await _providerCollection.UpdateOneAsync(filter, update);
             return new ConductorId(conductor.GetId());
         }
-        public async Task<ConductorId> ToggleActivityConductorById(ProviderId providerId, ConductorId conductorId)
+        public async Task<ConductorId> ToggleActivityConductorById(ConductorId conductorId)
         {
-            var provider = await GetProviderById(providerId);
-            if (!provider.HasValue())
+            var providersFind = await GetAllProviders(new GetAllProvidersDto());
+            if (!providersFind.HasValue())
             {
-                throw new ProviderNotFoundException();
+                throw new NoProvidersFoundException();
             }
-            var providerToUpdate = provider.Unwrap();
+            var providers = providersFind.Unwrap();
+            var providerToUpdate = providers.Find(p => p.GetConductors().Exists(c => c.GetId() == conductorId.GetId())) ?? throw new ProviderNotFoundException();
             var conductors = providerToUpdate.GetConductors();
             var conductorToUpdate = conductors.Find(c => c.GetId() == conductorId.GetId()) ?? throw new ConductorNotFoundException();
             conductorToUpdate.ChangeStatus();
@@ -454,7 +465,7 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
                 };
                 conductorsBsonArray.Add(conductorBson);
             }
-            var filter = Builders<BsonDocument>.Filter.Eq("_id", providerId.GetId());
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", providerToUpdate.GetId());
             var update = Builders<BsonDocument>.Update
                 .Set("conductors", conductorsBsonArray)
                 .Set("updatedAt", DateTime.Now);
@@ -517,5 +528,6 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             await _providerCollection.UpdateOneAsync(filter, update);
             return craneId;
         }
+
     }
 }

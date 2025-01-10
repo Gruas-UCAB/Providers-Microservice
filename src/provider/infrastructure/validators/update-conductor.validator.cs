@@ -7,10 +7,6 @@ namespace ProvidersMicroservice.src.provider.infrastructure.validators
     {
         public UpdateConductorCommandValidator()
         {
-            RuleFor(x => x.ProviderId)
-                .NotEmpty()
-                .WithMessage("Provider id is required");
-
             RuleFor(x => x.ConductorId)
                 .NotEmpty()
                 .WithMessage("Conductor id is required");

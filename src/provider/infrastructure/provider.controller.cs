@@ -154,6 +154,28 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             return Ok(providersList);
         }
 
+        [HttpGet("conductors")]
+        public async Task<IActionResult> GetAllActiveConductors([FromQuery] GetAllConductorsDto data)
+        {
+            var conductors = await _providerRepository.GetAllActiveConductors(data);
+            if (!conductors.HasValue())
+            {
+                return NotFound(new { errorMessage = new NoConductorsFoundException().Message });
+            }
+            var conductorsList = conductors.Unwrap().Select(
+                c => new
+                {
+                    Id = c.GetId(),
+                    Dni = c.GetDni(),
+                    Name = c.GetName(),
+                    Location = c.GetLocation(),
+                    Image = c.GetImage(),
+                    AssignedCrane = c.GetAssignedCrane(),
+                    IsActive = c.IsActive()
+                }).ToList();
+            return Ok(conductorsList);
+        }
+
         [HttpGet("conductors/{id}")]
         public async Task<IActionResult> GetAllConductors([FromQuery] GetAllConductorsDto data, string id)
         {
@@ -237,12 +259,12 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             });
         }
 
-        [HttpGet("conductors/conductor/{providerId}")]
-        public async Task<IActionResult> GetConductorById([FromBody] GetConductorByIdDto query, string providerId)
+        [HttpGet("conductors/conductor/{conductorId}")]
+        public async Task<IActionResult> GetConductorById(string conductorId)
         {
             try
             {
-                var conductor = await _providerRepository.GetConductorById(new ProviderId(providerId), new ConductorId(query.ConductorId));
+                var conductor = await _providerRepository.GetConductorById(new ConductorId(conductorId));
                 if (!conductor.HasValue())
                 {
                     return NotFound(new { errorMessage = new ConductorNotFoundException().Message });
@@ -291,12 +313,12 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             }
         }
 
-        [HttpPatch("conductors/conductor/location/{providerId}")]
-        public async Task<IActionResult> UpdateConductorLocation([FromBody] UpdateConductorDto data, string providerId)
+        [HttpPatch("conductors/conductor/location/{conductorId}")]
+        public async Task<IActionResult> UpdateConductorLocation([FromBody] UpdateConductorDto data, string conductorId)
         {
             try
             {
-                var command = new UpdateConductorCommand(providerId, data.ConductorId, data.Location);
+                var command = new UpdateConductorCommand(conductorId, data.Location);
                 if (string.IsNullOrEmpty(command.Location))
                 {
                     return BadRequest(new { errorMessage = "Location is required" });
@@ -321,12 +343,12 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             }
         }
 
-        [HttpPatch("conductors/conductor/toggle-activity/{providerId}")]
-        public async Task<IActionResult> ToggleConductorActivity([FromBody] UpdateConductorDto data, string providerId)
+        [HttpPatch("conductors/conductor/toggle-activity/{conductorId}")]
+        public async Task<IActionResult> ToggleConductorActivity([FromBody] UpdateConductorDto data, string conductorId)
         {
             try
             {
-                var command = new UpdateConductorCommand(providerId, data.ConductorId, data.Location);
+                var command = new UpdateConductorCommand(conductorId, data.Location);
                 if (!string.IsNullOrEmpty(command.Location))
                 {
                     return BadRequest(new { errorMessage = "Location is not required" });

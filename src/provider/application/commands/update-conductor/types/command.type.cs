@@ -2,7 +2,6 @@
 {
     public record UpdateConductorCommand
     (
-        string ProviderId,
         string ConductorId,
         string? Location
     );
