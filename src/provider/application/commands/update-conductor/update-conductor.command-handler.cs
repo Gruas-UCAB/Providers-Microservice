@@ -13,26 +13,21 @@ namespace ProvidersMicroservice.src.provider.application.commands.update_conduct
         private readonly IProviderRepository _providerRepository = providerRepository;
         public async Task<Result<UpdateConductorResponse>> Execute(UpdateConductorCommand data)
         {
-            var providerFound = await _providerRepository.GetProviderById(new ProviderId(data.ProviderId));
-            if (!providerFound.HasValue())
-            {
-                return Result<UpdateConductorResponse>.Failure(new ProviderNotFoundException());
-            }
-            var provider = providerFound.Unwrap();
-            var conductor = provider.GetConductors().Find(c => c.GetId() == data.ConductorId);
-            if (conductor == null)
+           var conductorFind = await _providerRepository.GetConductorById(new ConductorId(data.ConductorId));
+            if (!conductorFind.HasValue())
             {
                 return Result<UpdateConductorResponse>.Failure(new ConductorNotFoundException());
             }
+            var conductor = conductorFind.Unwrap();
             if (data.Location != null)
             {
                 conductor.ChangeLocation(new ConductorLocation(data.Location));
-                await _providerRepository.UpdateConductorLocationById(new ProviderId(data.ProviderId), conductor);
+                await _providerRepository.UpdateConductorLocationById(conductor);
             }
             else 
             {
                 conductor.ChangeStatus();
-                await _providerRepository.ToggleActivityConductorById(new ProviderId(data.ProviderId), new ConductorId(data.ConductorId));
+                await _providerRepository.ToggleActivityConductorById(new ConductorId(data.ConductorId));
             }
             return Result<UpdateConductorResponse>.Success(new UpdateConductorResponse(conductor.GetId()));
         }

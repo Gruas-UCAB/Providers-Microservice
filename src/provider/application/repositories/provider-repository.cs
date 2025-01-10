@@ -18,10 +18,11 @@ namespace ProvidersMicroservice.src.provider.application.repositories
         Task<_Optional<List<Crane>>> GetAllCranes(GetAllCranesDto data, ProviderId providerId);
         Task<_Optional<Crane>> GetCraneById(ProviderId providerId, CraneId craneId);
         Task<_Optional<Provider>> GetProviderById(ProviderId id);
+        Task<_Optional<List<Conductor>>> GetAllActiveConductors(GetAllConductorsDto data);
         Task<_Optional<List<Conductor>>> GetAllConductors(GetAllConductorsDto data, ProviderId providerId);
-        Task<_Optional<Conductor>> GetConductorById(ProviderId providerId, ConductorId conductorId);
-        Task<ConductorId> UpdateConductorLocationById(ProviderId providerId, Conductor conductor);
-        Task<ConductorId> ToggleActivityConductorById(ProviderId providerId, ConductorId craneId);
+        Task<_Optional<Conductor>> GetConductorById(ConductorId conductorId);
+        Task<ConductorId> UpdateConductorLocationById(Conductor conductor);
+        Task<ConductorId> ToggleActivityConductorById(ConductorId craneId);
         Task<CraneId> ToggleActivityCraneById(ProviderId providerId, CraneId craneId);
         Task<ProviderId> ToggleActivityProviderById(ProviderId id);
     }

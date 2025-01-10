@@ -85,6 +85,32 @@
   },
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetAllActiveConductors",
+    "RelativePath": "provider/conductors",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "offset",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "active",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "GetAllConductors",
     "RelativePath": "provider/conductors/{id}",
     "HttpMethod": "GET",
@@ -117,18 +143,13 @@
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "GetConductorById",
-    "RelativePath": "provider/conductors/conductor/{providerId}",
+    "RelativePath": "provider/conductors/conductor/{conductorId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "query",
-        "Type": "ProvidersMicroservice.src.provider.infrastructure.dto.GetConductorByIdDto",
-        "IsRequired": true
-      },
-      {
-        "Name": "providerId",
+        "Name": "conductorId",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -138,7 +159,7 @@
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "UpdateConductorLocation",
-    "RelativePath": "provider/conductors/conductor/location/{providerId}",
+    "RelativePath": "provider/conductors/conductor/location/{conductorId}",
     "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
@@ -149,7 +170,7 @@
         "IsRequired": true
       },
       {
-        "Name": "providerId",
+        "Name": "conductorId",
         "Type": "System.String",
         "IsRequired": true
       }
@@ -159,7 +180,7 @@
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "ToggleConductorActivity",
-    "RelativePath": "provider/conductors/conductor/toggle-activity/{providerId}",
+    "RelativePath": "provider/conductors/conductor/toggle-activity/{conductorId}",
     "HttpMethod": "PATCH",
     "IsController": true,
     "Order": 0,
@@ -170,7 +191,7 @@
         "IsRequired": true
       },
       {
-        "Name": "providerId",
+        "Name": "conductorId",
         "Type": "System.String",
         "IsRequired": true
       }
