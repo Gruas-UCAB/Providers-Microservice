@@ -143,6 +143,17 @@ namespace ProvidersMicroservice.src.provider.infrastructure.repositories
             return _Optional<List<Provider>>.Of(providerList);
         }
 
+        public async  Task<_Optional<List<Crane>>> GetAllActiveCranes(GetAllCranesDto data)
+        {
+            var providers = await GetAllProviders(new GetAllProvidersDto());
+            if (!providers.HasValue())
+            {
+                return _Optional<List<Crane>>.Empty();
+            }
+            var cranes = providers.Unwrap().SelectMany(p => p.GetCranes()).Where(c => c.IsActive()).ToList();
+            return (cranes.Count == 0) ? _Optional<List<Crane>>.Empty() : _Optional<List<Crane>>.Of(cranes);
+        }
+
         public async Task<_Optional<Conductor>> GetConductorById(ConductorId conductorId)
         {  
             var providers = await GetAllProviders(new GetAllProvidersDto());

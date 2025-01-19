@@ -216,6 +216,32 @@
   },
   {
     "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
+    "Method": "GetAllActiveCranes",
+    "RelativePath": "provider/cranes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "limit",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "offset",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "active",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ProvidersMicroservice.src.provider.infrastructure.ProviderController",
     "Method": "GetAllCranes",
     "RelativePath": "provider/cranes/{id}",
     "HttpMethod": "GET",

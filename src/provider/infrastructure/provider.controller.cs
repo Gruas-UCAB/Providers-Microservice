@@ -198,6 +198,28 @@ namespace ProvidersMicroservice.src.provider.infrastructure
             return Ok(conductorsList);
         }
 
+        [HttpGet("cranes")]
+        public async Task<IActionResult> GetAllActiveCranes([FromQuery] GetAllCranesDto data)
+        {
+            var cranes = await _providerRepository.GetAllActiveCranes(data);
+            if (!cranes.HasValue())
+            {
+                return NotFound(new { errorMessage = new NoCranesFoundException().Message });
+            }
+            var cranesList = cranes.Unwrap().Select(
+                c => new
+                {
+                    Id = c.GetId(),
+                    Brand = c.GetBrand(),
+                    Model = c.GetModel(),
+                    Plate = c.GetPlate(),
+                    Type = c.GetType(),
+                    Year = c.GetYear(),
+                    IsActive = c.IsActive()
+                }).ToList();
+            return Ok(cranesList);
+        }
+
         [HttpGet("cranes/{id}")]
         public async Task<IActionResult> GetAllCranes([FromQuery] GetAllCranesDto data, string id)
         {

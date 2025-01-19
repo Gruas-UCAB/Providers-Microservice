@@ -15,6 +15,7 @@ namespace ProvidersMicroservice.src.provider.application.repositories
         Task<Crane> SaveCrane(SaveCraneDto data);
         Task<Conductor> SaveConductor(SaveConductorDto data);
         Task<_Optional<List<Provider>>> GetAllProviders(GetAllProvidersDto data);
+        Task<_Optional<List<Crane>>> GetAllActiveCranes(GetAllCranesDto data);
         Task<_Optional<List<Crane>>> GetAllCranes(GetAllCranesDto data, ProviderId providerId);
         Task<_Optional<Crane>> GetCraneById(ProviderId providerId, CraneId craneId);
         Task<_Optional<Provider>> GetProviderById(ProviderId id);
