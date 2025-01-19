@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProvidersMicroservice")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ebe4fc8143828b61231fe7319d6b412e1729dc35")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ecc9d34fcad08a90e1a0e71e3c4ae5efa0d6de99")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProvidersMicroservice")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProvidersMicroservice")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

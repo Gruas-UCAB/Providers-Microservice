@@ -1,7 +1,9 @@
 using DotNetEnv;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using ProvidersMicroservice.core.Application;
 using ProvidersMicroservice.core.Infrastructure;
 using ProvidersMicroservice.src.crane.application.commands.create_crane.types;
@@ -56,6 +58,14 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddScoped<ITokenAuthenticationService, JwtService>();
 
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Providers Microservice API", Version = "v1" });
+}); ;
+
+
 var app = builder.Build();
 
 app.UseHttpsRedirection();
@@ -63,5 +73,12 @@ app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Providers Microservice API v1");
+
+});
 
 app.Run();

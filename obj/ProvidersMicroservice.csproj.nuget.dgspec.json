@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Admin\\Documents\\Universidad\\9no Semestre\\Desarrollo de Software\\Proyecto\\gruas-ucab-backend\\MicroServices\\Providers-Microservice\\ProvidersMicroservice.csproj": {}
+    "C:\\Users\\ANTONIO\\Desktop\\ProyectoDW-GRUA\\RepoBackend-Provider-Unitests\\ProvidersMicroservice.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Admin\\Documents\\Universidad\\9no Semestre\\Desarrollo de Software\\Proyecto\\gruas-ucab-backend\\MicroServices\\Providers-Microservice\\ProvidersMicroservice.csproj": {
+    "C:\\Users\\ANTONIO\\Desktop\\ProyectoDW-GRUA\\RepoBackend-Provider-Unitests\\ProvidersMicroservice.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Admin\\Documents\\Universidad\\9no Semestre\\Desarrollo de Software\\Proyecto\\gruas-ucab-backend\\MicroServices\\Providers-Microservice\\ProvidersMicroservice.csproj",
+        "projectUniqueName": "C:\\Users\\ANTONIO\\Desktop\\ProyectoDW-GRUA\\RepoBackend-Provider-Unitests\\ProvidersMicroservice.csproj",
         "projectName": "ProvidersMicroservice",
-        "projectPath": "C:\\Users\\Admin\\Documents\\Universidad\\9no Semestre\\Desarrollo de Software\\Proyecto\\gruas-ucab-backend\\MicroServices\\Providers-Microservice\\ProvidersMicroservice.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Admin\\Documents\\Universidad\\9no Semestre\\Desarrollo de Software\\Proyecto\\gruas-ucab-backend\\MicroServices\\Providers-Microservice\\obj\\",
+        "projectPath": "C:\\Users\\ANTONIO\\Desktop\\ProyectoDW-GRUA\\RepoBackend-Provider-Unitests\\ProvidersMicroservice.csproj",
+        "packagesPath": "C:\\Users\\ANTONIO\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ANTONIO\\Desktop\\ProyectoDW-GRUA\\RepoBackend-Provider-Unitests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\ANTONIO\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -76,7 +76,15 @@
             },
             "Swashbuckle.AspNetCore.Swagger": {
               "target": "Package",
-              "version": "[7.1.0, )"
+              "version": "[7.2.0, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerGen": {
+              "target": "Package",
+              "version": "[7.2.0, )"
+            },
+            "Swashbuckle.AspNetCore.SwaggerUI": {
+              "target": "Package",
+              "version": "[7.2.0, )"
             }
           },
           "imports": [
@@ -98,7 +106,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
